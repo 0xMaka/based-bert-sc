@@ -31,7 +31,7 @@ for batch in train_dataloader:
 print('[-] Batch: ')
 print({k: v.shape for k, v in batch.items()})
 id2label =  { 0: 'Bearish', 1: 'Bullish' }
-label2id =  { 'bearish': 0, 'Bullish': 1 }
+label2id =  { 'Bearish': 0, 'Bullish': 1 }
 
 from transformers import AutoModelForSequenceClassification
 model = AutoModelForSequenceClassification.from_pretrained('distilbert-base-uncased', num_labels=2, id2label=id2label, label2id=label2id)
