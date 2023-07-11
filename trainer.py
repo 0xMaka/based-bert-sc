@@ -1,6 +1,6 @@
 print('[+] Preparing dataset..')
 from datasets import load_dataset, concatenate_datasets
-dataset = load_dataset('0xMaka/trading-candles-subset-sc-format')#, split='train[:50%]').train_test_split()
+dataset = load_dataset('0xMaka/trading-candles-subset-sc-format')
 
 from transformers import AutoTokenizer
 tokenizer = AutoTokenizer.from_pretrained('distilbert-base-uncased')
@@ -9,13 +9,11 @@ tokenized_dataset = dataset.map(lambda x: tokenizer(x['text'], truncation=True),
 from transformers import DataCollatorWithPadding
 data_collator = DataCollatorWithPadding(tokenizer=tokenizer)
 
-# - format columns
 tokenized_dataset = tokenized_dataset.remove_columns('text')
 tokenized_dataset = tokenized_dataset.rename_column('label', 'labels')
 tokenized_dataset.set_format('torch')
 print(f'[+] Column names: {tokenized_dataset["train"].column_names}')
 
-# - define dataloaders
 BATCH_SIZE = 256
 WORKERS = 20
 print(f'[+] Setting up dataloader..\n[-] Batch size: {BATCH_SIZE}\n[-] Number of workers: {WORKERS}')
@@ -40,7 +38,6 @@ model = AutoModelForSequenceClassification.from_pretrained('distilbert-base-unca
 outputs = model(** batch)
 print(f'[-] Output Loss and and Logit Shape: {outputs.loss} | {outputs.logits.shape}')
 
-# - pre train
 print('[+] Setting optimizer..')
 from torch.optim import AdamW
 optimizer = AdamW(model.parameters(), lr=5e-5)
@@ -63,7 +60,6 @@ from torch import device, backends
 backends.cuda.matmul.allow_tf32 = True
 model.to(device('cuda'))
 
-#- train
 import evaluate
 accuracy = evaluate.load('accuracy')
 print('[+] Training...')
