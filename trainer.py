@@ -9,7 +9,7 @@ tokenized_dataset = dataset.map(lambda x: tokenizer(x['text'], truncation=True),
 from transformers import DataCollatorWithPadding
 data_collator = DataCollatorWithPadding(tokenizer=tokenizer)
 
-# -format columns
+# - format columns
 tokenized_dataset = tokenized_dataset.remove_columns('text')
 tokenized_dataset = tokenized_dataset.rename_column('label', 'labels')
 tokenized_dataset.set_format('torch')
